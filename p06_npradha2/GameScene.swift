@@ -197,7 +197,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if(snake1[0].position.x > self.frame.size.width){
             snake1[0].position = CGPoint(x:self.frame.size.width, y:snake1[0].position.y + yDist / 5)
         }
-      
         
      }
     
