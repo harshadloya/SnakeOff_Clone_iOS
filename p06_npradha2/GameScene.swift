@@ -49,21 +49,22 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     let path5 = SKAction.sequence([path1,path2,path3,path4])
                     let path6 = SKAction.repeatForever(path5)
                     self.snake1[0].run(path6)
+                    
+                    self.addChild(snake1[i])
                 }
                 else
                 {
-                    let path1 = SKAction.moveTo(x: snake1[i-1].position.x, duration: 1)
-                    let path2 = SKAction.moveTo(y: snake1[i-1].position.y, duration: 1)
-                    let path3 = SKAction.group([path1,path2])
+                    self.addChild(snake1[i])
                     
-                    let path5 = SKAction.follow(snake1[i-1].path!, asOffset: false, orientToPath: false, duration: 2)
-              //    let path5 = SKAction.move(to: snake1[i-1].position, duration: 2)
-                    let path4 = SKAction.repeatForever(path3)
+                    //  snake1[i].run(path4)
+                    let rangeToSprite = SKRange(lowerLimit: 15.0, upperLimit: 15.0)
                     
-                    self.snake1[i].run(path4)
+                    let distanceConstraint = SKConstraint.distance(rangeToSprite, to: snake1[i-1])
+                    let rangeForOrientation = SKRange(lowerLimit: CGFloat(0*14), upperLimit: CGFloat(0*14))
+                    
+                    let orientConstraint = SKConstraint.orient(to: snake1[i-1], offset: rangeForOrientation)
+                    snake1[i].constraints = [orientConstraint, distanceConstraint]
                 }
-                self.addChild(snake1[i])
-                //snake1[i].run(path_1)
             }
         }
     }
