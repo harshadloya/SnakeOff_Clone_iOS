@@ -54,20 +54,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             {
                 circle2.physicsBody = SKPhysicsBody(circleOfRadius: 10)
                 circle2.physicsBody?.categoryBitMask = GameScene.snake1Head
-                circle2.physicsBody?.collisionBitMask = 0
+               // circle2.physicsBody?.collisionBitMask = 0
                 circle2.physicsBody?.contactTestBitMask = GameScene.food
                 circle2.physicsBody?.affectedByGravity = false
                 circle2.physicsBody?.isDynamic = false
-                circle2.zPosition = 1
+                circle2.zPosition = 2
             }
             else{
                 circle2.physicsBody = SKPhysicsBody(circleOfRadius: 10)
                 circle2.physicsBody?.categoryBitMask = GameScene.snake1Body
-                circle2.physicsBody?.collisionBitMask = 0
+               // circle2.physicsBody?.collisionBitMask = 0
                 circle2.physicsBody?.contactTestBitMask = 0
                 circle2.physicsBody?.affectedByGravity = false
                 circle2.physicsBody?.isDynamic = false
-                circle2.zPosition = 1
+                circle2.zPosition = 2
             }
             
             snake1.append(circle2)
@@ -84,7 +84,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             snakeFood.physicsBody = SKPhysicsBody(circleOfRadius: 10)
             snakeFood.physicsBody?.categoryBitMask = GameScene.food
-            snakeFood.physicsBody?.collisionBitMask = 0
+            //snakeFood.physicsBody?.collisionBitMask = 0
             snakeFood.physicsBody?.contactTestBitMask = GameScene.snake1Head
             snakeFood.physicsBody?.affectedByGravity = false
             snakeFood.physicsBody?.isDynamic = false
@@ -134,12 +134,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.base.fillColor = SKColor.darkGray
         self.base.position = CGPoint(x:100, y:100)
         self.base.alpha = 0.4
+        self.base.zPosition = 3
         self.addChild(base)
 
         self.controller = SKShapeNode(circleOfRadius: 35)
         self.controller.fillColor = SKColor.gray
         self.controller.position = self.base.position
         self.controller.alpha = 0.7
+        self.controller.zPosition = 4
         self.addChild(controller)
     }
 
@@ -180,17 +182,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         return randomValue() * (max - min) + min
     }
     
-    func touchDown(atPoint pos : CGPoint) {
-   
-    }
     
     func touchMoved(toPoint pos : CGPoint) {
       
         
-    }
-    
-    func touchUp(atPoint pos : CGPoint) {
-      
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -251,25 +246,28 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let moveAction = SKAction.move(to: positionArray[i-1], duration: 0.05)
             snake1[i].run(moveAction)
         }
-        positionArray.removeAll()
-        
         //if snake head touches screen boundries
         if(snake1[0].position.y < 0){
+            self.killSnake(snakeNumber: 1)
             snake1[0].position = CGPoint(x:snake1[0].position.x - xDist / 5, y:0)
         }
         if(snake1[0].position.y > self.frame.size.height){
+            self.killSnake(snakeNumber: 1)
             snake1[0].position = CGPoint(x:snake1[0].position.x - xDist / 5, y:screenHeight)
         }
         
         if(snake1[0].position.x < 0){
+            self.killSnake(snakeNumber: 1)
             snake1[0].position = CGPoint(x:0, y:snake1[0].position.y + yDist / 5)
         }
         if(snake1[0].position.x > self.frame.size.width){
+            self.killSnake(snakeNumber: 1)
             snake1[0].position = CGPoint(x:screenWidth, y:snake1[0].position.y + yDist / 5)
         }
         
         updateScore()
-        
+        positionArray.removeAll()
+
      }
     
     func updateScore()
@@ -277,19 +275,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         //checking if food was eaten
         for x in 0...food.count-1
         {
-            //print(snake1[0].position)
-            //print("Food")
-            //print(food[x].position)
-            
-            //The below way works but need to handle more cases...
-            
-//            if((snake1[0].position.x >= food[x].position.x-CGFloat(1) && snake1[0].position.x <= food[x].position.x+CGFloat(1)) && (snake1[0].position.y >= food[x].position.y-CGFloat(1) && snake1[0].position.y >= food[x].position.y+CGFloat(1)))
-            
-            if(snake1[0].position == food[x].position)
+            if(Int(snake1[0].position.x) >= Int(food[x].position.x) - 10 &&
+                Int(snake1[0].position.x) <= Int(food[x].position.x) + 10 &&
+                Int(snake1[0].position.y) >= Int(food[x].position.y) - 10 &&
+                Int(snake1[0].position.y) <= Int(food[x].position.y) + 10)
             {
                 print("Food Eaten")
+                print("head.x:",Int(snake1[0].position.x) ," food.x:",Int(food[x].position.x), " head.y:",Int(snake1[0].position.y), " food.y:",Int(food[x].position.y))
+                    
                 food[x].position = CGPoint(x: randomValue(min: 20, max: screenWidth - 20), y: randomValue(min: 20, max: screenHeight - 20))
-                
+                /*
                 for i in 2...snake1.count-1
                 {
                     if(snake1[i].position == food[x].position)
@@ -301,9 +296,23 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         break
                     }
                 }
+                 */
             }
         }
         
+    }
+    
+    func killSnake(snakeNumber: Int){
+        self.isPaused = true
+        if(snakeNumber == 1){
+            for i in 0...snake1.count - 1 {
+              //  positionArray[i].x = snake1[i].position.x + randomValue(min: -10.0, max: 10.0)
+              //  positionArray[i].y = snake1[i].position.y + randomValue(min: -10.0, max: 10.0)
+                snake1[i].removeAllActions()
+                snake1[i].position.x = snake1[i].position.x + randomValue(min: -10.0, max: 10.0)
+                snake1[i].position.y = snake1[i].position.y + randomValue(min: -10.0, max: 10.0)
+            }
+        }
     }
     
     
