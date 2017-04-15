@@ -9,8 +9,9 @@
 import SpriteKit
 import GameplayKit
 
-class GameScene: SKScene, SKPhysicsContactDelegate {
-    
+class GameScene: SKScene, SKPhysicsContactDelegate
+{
+    var score = Int()
     var scoreLabel = SKLabelNode()
     var highScoreLabel = SKLabelNode()
     var circle = SKShapeNode()
@@ -28,14 +29,24 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     var screenWidth = CGFloat()
     var screenHeight = CGFloat()
+    
+    var lost = Bool()
+    var restartBtn = SKSpriteNode()
 
     
+    /*
     static  let snake1Head : UInt32 = 0x1 << 1
     static  let snake1Body : UInt32 = 0x1 << 2
     static  let food : UInt32 = 0x1 << 3
+    */
 
-    override func didMove(to view: SKView) {
-        
+    override func didMove(to view: SKView)
+    {
+        startGame()
+    }
+    
+    func startGame()
+    {
         self.physicsWorld.contactDelegate = self
         
         self.createController()
@@ -50,76 +61,69 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             circle2 = self.snake()
             circle2.position.x = circle2.position.x - CGFloat(i * 15)
             circle2.position.y = screenHeight / 2
+            
+            /*
             if(i == 0)
             {
                 circle2.physicsBody = SKPhysicsBody(circleOfRadius: 10)
                 circle2.physicsBody?.categoryBitMask = GameScene.snake1Head
-               // circle2.physicsBody?.collisionBitMask = 0
+                circle2.physicsBody?.collisionBitMask = 0
                 circle2.physicsBody?.contactTestBitMask = GameScene.food
                 circle2.physicsBody?.affectedByGravity = false
                 circle2.physicsBody?.isDynamic = false
                 circle2.zPosition = 2
             }
-            else{
+            else
+            {
                 circle2.physicsBody = SKPhysicsBody(circleOfRadius: 10)
                 circle2.physicsBody?.categoryBitMask = GameScene.snake1Body
-               // circle2.physicsBody?.collisionBitMask = 0
+                circle2.physicsBody?.collisionBitMask = 0
                 circle2.physicsBody?.contactTestBitMask = 0
                 circle2.physicsBody?.affectedByGravity = false
                 circle2.physicsBody?.isDynamic = false
                 circle2.zPosition = 2
             }
+             */
             
             snake1.append(circle2)
         }
-
-
         
-        for _ in 0...1
+        
+        
+        for _ in 0...14
         {
             var snakeFood = SKShapeNode()
             snakeFood = self.foodCreate()
             snakeFood.position.x = CGFloat(randomValue(min: 20, max: screenWidth - 20))
             snakeFood.position.y = CGFloat(randomValue(min: 20, max: screenHeight - 20))
             
+            /*
             snakeFood.physicsBody = SKPhysicsBody(circleOfRadius: 10)
             snakeFood.physicsBody?.categoryBitMask = GameScene.food
-            //snakeFood.physicsBody?.collisionBitMask = 0
+            snakeFood.physicsBody?.collisionBitMask = 0
             snakeFood.physicsBody?.contactTestBitMask = GameScene.snake1Head
             snakeFood.physicsBody?.affectedByGravity = false
             snakeFood.physicsBody?.isDynamic = false
             snakeFood.zPosition = 1
+            */
             
             food.append(snakeFood)
-
+            
         }
         
         //NSLog("%d", snake1.count)
         if(!snake1.isEmpty)
         {
-            NSLog("adding snake")
+            NSLog("Adding snake")
             for i in 0...snake1.count-1
             {
-               // if(i == 0)
-               // {
-                //    self.addChild(snake1[i])
-               // }
-               // else
-               // {
-                    self.addChild(snake1[i])
-                  //  let rangeToSprite = SKRange(lowerLimit: 15.0, upperLimit: 15.0)
-                    
-                //    let distanceConstraint = SKConstraint.distance(rangeToSprite, to: snake1[i-1])
-                   // let rangeForOrientation = SKRange(lowerLimit: CGFloat(M_2_PI*7), upperLimit: CGFloat(M_2_PI*7))
-                    
-                   // let orientConstraint = SKConstraint.orient(to: snake1[i-1], offset: rangeForOrientation)
-//                    snake1[i].constraints = [orientConstraint, distanceConstraint]
-               // }
+               self.addChild(snake1[i])
             }
         }
         
         if(!food.isEmpty)
         {
+            NSLog("Adding snakefood")
             for x in 0...food.count-1
             {
                 self.addChild(food[x])
@@ -158,7 +162,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     func foodCreate() -> SKShapeNode
     {
-        let foodCircle = SKShapeNode(circleOfRadius: 10)
+        let foodCircle = SKShapeNode(circleOfRadius: 5)
         foodCircle.position = CGPoint(x: 250, y:100)
         foodCircle.fillColor = SKColor.green
         foodCircle.strokeColor = SKColor.brown
@@ -189,13 +193,28 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for touch in touches{
+        for touch in touches
+        {
             let location  = touch.location(in: self)
-            if(controller.contains(location)){
-                controllerPressed = true
+            
+            if(lost != true)
+            {
+            
+                if(controller.contains(location))
+                {
+                    controllerPressed = true
                 }
-            else{
-                controllerPressed = false
+                else
+                {
+                    controllerPressed = false
+                }
+            }
+            else
+            {
+                if restartBtn.contains(location)
+                {
+                    restartGame()
+                }
             }
         }
     }
@@ -224,7 +243,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             self.controller.position = self.base.position
     }
     
-    override func update(_ currentTime: TimeInterval) {
+    override func update(_ currentTime: TimeInterval)
+    {
+        if lost == true {
+            return
+        }
         //save old position in array
         for i in 0...snake1.count - 1
         {
@@ -281,38 +304,72 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 Int(snake1[0].position.y) <= Int(food[x].position.y) + 10)
             {
                 print("Food Eaten")
-                print("head.x:",Int(snake1[0].position.x) ," food.x:",Int(food[x].position.x), " head.y:",Int(snake1[0].position.y), " food.y:",Int(food[x].position.y))
+                //print("head.x:",Int(snake1[0].position.x) ," food.x:",Int(food[x].position.x), " head.y:",Int(snake1[0].position.y), " food.y:",Int(food[x].position.y))
                     
                 food[x].position = CGPoint(x: randomValue(min: 20, max: screenWidth - 20), y: randomValue(min: 20, max: screenHeight - 20))
-                /*
-                for i in 2...snake1.count-1
-                {
-                    if(snake1[i].position == food[x].position)
-                    {
-                        food[x].position = CGPoint(x: randomValue(min: 20, max: screenWidth - 20), y: randomValue(min: 20, max: screenHeight - 20))
-                    }
-                    else
-                    {
-                        break
-                    }
-                }
-                 */
+                score += 1
+                scoreLabel.text = "\(score)"
+                
+                self.growSnake()
             }
         }
         
     }
     
-    func killSnake(snakeNumber: Int){
-        self.isPaused = true
-        if(snakeNumber == 1){
+    func growSnake()
+    {
+        var circle2 = SKShapeNode()
+        circle2 = self.snake()
+        circle2.position.x = snake1[snake1.count-1].position.x + 15.0
+        circle2.position.y = snake1[snake1.count-1].position.y
+        
+        snake1.append(circle2)
+        print(snake1.count-1)
+        self.addChild(snake1[snake1.count-1])
+    }
+    
+    func killSnake(snakeNumber: Int)
+    {
+        //self.isPaused = true
+        lost = true
+        if(snakeNumber == 1)
+        {
             for i in 0...snake1.count - 1 {
               //  positionArray[i].x = snake1[i].position.x + randomValue(min: -10.0, max: 10.0)
               //  positionArray[i].y = snake1[i].position.y + randomValue(min: -10.0, max: 10.0)
                 snake1[i].removeAllActions()
+                
+                //When lost gives broken effect
                 snake1[i].position.x = snake1[i].position.x + randomValue(min: -10.0, max: 10.0)
                 snake1[i].position.y = snake1[i].position.y + randomValue(min: -10.0, max: 10.0)
             }
         }
+        restartButton()
+    }
+    
+    func restartButton()
+    {
+        restartBtn = SKSpriteNode(color: UIColor.gray, size: CGSize(width: 100, height: 100))
+        restartBtn.size = CGSize(width: 100, height: 50)
+        restartBtn.position = CGPoint(x: screenWidth / 2, y: screenHeight / 2)
+        restartBtn.zPosition = 5
+        restartBtn.setScale(0)
+        self.addChild(restartBtn)
+        
+        restartBtn.run(SKAction.scale(to: 1, duration: TimeInterval(0.5)))
+    }
+    
+    func restartGame()
+    {
+        snake1.removeAll()
+        food.removeAll()
+        
+        self.removeAllChildren()
+        self.removeAllActions()
+        
+        lost = false
+        
+        startGame()
     }
     
     
