@@ -40,6 +40,13 @@ class GameMenuScene: SKScene
                 gamescene.scaleMode = .aspectFill
                 self.view?.presentScene(gamescene)
             }
+            if button2.contains(location)
+            {
+                let twoPlayerGame = TwoPlayers()
+                twoPlayerGame.size = (self.view?.bounds.size)!
+                twoPlayerGame.scaleMode = .aspectFill
+                self.view?.presentScene(twoPlayerGame)
+            }
         }
     }
     
