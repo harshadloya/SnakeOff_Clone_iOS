@@ -21,6 +21,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate
 
     var snake1 = Array<SKShapeNode>()
     var food = Array<SKShapeNode>()
+    var deadSnakeFood = Array<SKShapeNode>()
 
     var base = SKShapeNode()
     var controller = SKShapeNode()
@@ -75,70 +76,25 @@ class GameScene: SKScene, SKPhysicsContactDelegate
         self.addChild(highScoreLabel)
         
         
-        for i in 0...4
+        //Creating New Snake - Temp only 1 player
+        self.createSnake()
+        
+        if(lost != true)
         {
-            var circle2 = SKShapeNode()
-            circle2 = self.snake()
-            circle2.position.x = circle2.position.x - CGFloat(i * 15)
-            circle2.position.y = screenHeight / 2
-            
-            /*
-            if(i == 0)
+            //Creating fixed food on screen
+            for _ in 0...14
             {
-                circle2.physicsBody = SKPhysicsBody(circleOfRadius: 10)
-                circle2.physicsBody?.categoryBitMask = GameScene.snake1Head
-                circle2.physicsBody?.collisionBitMask = 0
-                circle2.physicsBody?.contactTestBitMask = GameScene.food
-                circle2.physicsBody?.affectedByGravity = false
-                circle2.physicsBody?.isDynamic = false
-                circle2.zPosition = 2
-            }
-            else
-            {
-                circle2.physicsBody = SKPhysicsBody(circleOfRadius: 10)
-                circle2.physicsBody?.categoryBitMask = GameScene.snake1Body
-                circle2.physicsBody?.collisionBitMask = 0
-                circle2.physicsBody?.contactTestBitMask = 0
-                circle2.physicsBody?.affectedByGravity = false
-                circle2.physicsBody?.isDynamic = false
-                circle2.zPosition = 2
-            }
-             */
+                var snakeFood = SKShapeNode()
+                snakeFood = self.foodCreate()
+                snakeFood.position.x = CGFloat(randomValue(min: 20, max: screenWidth - 20))
+                snakeFood.position.y = CGFloat(randomValue(min: 20, max: screenHeight - 20))
             
-            snake1.append(circle2)
+                food.append(snakeFood)
+            }
         }
-        
-        
-        
-        for _ in 0...14
+        else
         {
-            var snakeFood = SKShapeNode()
-            snakeFood = self.foodCreate()
-            snakeFood.position.x = CGFloat(randomValue(min: 20, max: screenWidth - 20))
-            snakeFood.position.y = CGFloat(randomValue(min: 20, max: screenHeight - 20))
-            
-            /*
-            snakeFood.physicsBody = SKPhysicsBody(circleOfRadius: 10)
-            snakeFood.physicsBody?.categoryBitMask = GameScene.food
-            snakeFood.physicsBody?.collisionBitMask = 0
-            snakeFood.physicsBody?.contactTestBitMask = GameScene.snake1Head
-            snakeFood.physicsBody?.affectedByGravity = false
-            snakeFood.physicsBody?.isDynamic = false
-            snakeFood.zPosition = 1
-            */
-            
-            food.append(snakeFood)
-            
-        }
-        
-        //NSLog("%d", snake1.count)
-        if(!snake1.isEmpty)
-        {
-            NSLog("Adding snake")
-            for i in 0...snake1.count-1
-            {
-               self.addChild(snake1[i])
-            }
+            lost = false
         }
         
         if(!food.isEmpty)
@@ -148,7 +104,30 @@ class GameScene: SKScene, SKPhysicsContactDelegate
             {
                 self.addChild(food[x])
             }
+        }
+        
+    }
+    
+    func createSnake()
+    {
+        for i in 0...4
+        {
+            var circle2 = SKShapeNode()
+            circle2 = self.snake()
+            circle2.position.x = circle2.position.x - CGFloat(i * 15)
+            circle2.position.y = screenHeight / 2
             
+            snake1.append(circle2)
+        }
+        
+        //NSLog("%d", snake1.count)
+        if(!snake1.isEmpty)
+        {
+            NSLog("Adding snake")
+            for i in 0...snake1.count-1
+            {
+                self.addChild(snake1[i])
+            }
         }
     }
     
@@ -322,20 +301,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate
         //if snake head touches screen boundries
         if(snake1[0].position.y < 0){
             self.killSnake(snakeNumber: 1)
-            snake1[0].position = CGPoint(x:snake1[0].position.x - xDist / 5, y:0)
+            //snake1[0].position = CGPoint(x:snake1[0].position.x - xDist / 5, y:0)
         }
         if(snake1[0].position.y > self.frame.size.height){
             self.killSnake(snakeNumber: 1)
-            snake1[0].position = CGPoint(x:snake1[0].position.x - xDist / 5, y:screenHeight)
+            //snake1[0].position = CGPoint(x:snake1[0].position.x - xDist / 5, y:screenHeight)
         }
         
         if(snake1[0].position.x < 0){
             self.killSnake(snakeNumber: 1)
-            snake1[0].position = CGPoint(x:0, y:snake1[0].position.y + yDist / 5)
+            //snake1[0].position = CGPoint(x:0, y:snake1[0].position.y + yDist / 5)
         }
         if(snake1[0].position.x > self.frame.size.width){
             self.killSnake(snakeNumber: 1)
-            snake1[0].position = CGPoint(x:screenWidth, y:snake1[0].position.y + yDist / 5)
+            //snake1[0].position = CGPoint(x:screenWidth / 2, y:snake1[0].position.y + yDist / 5)
         }
         
         updateScore()
@@ -364,6 +343,31 @@ class GameScene: SKScene, SKPhysicsContactDelegate
             }
         }
         
+        //checking if food created by dead snake was eaten
+        if(!deadSnakeFood.isEmpty)
+        {
+            for x in 0...deadSnakeFood.count-1
+            {
+                //print("head.x:",Int(snake1[0].position.x) ," food.x:",Int(deadSnakeFood[x].position.x), " head.y:",Int(snake1[0].position.y), " food.y:",Int(deadSnakeFood[x].position.y))
+                if(Int(snake1[0].position.x) >= Int(deadSnakeFood[x].position.x) - 5 &&
+                    Int(snake1[0].position.x) <= Int(deadSnakeFood[x].position.x) + 5 &&
+                    Int(snake1[0].position.y) >= Int(deadSnakeFood[x].position.y) - 5 &&
+                    Int(snake1[0].position.y) <= Int(deadSnakeFood[x].position.y) + 5)
+                {
+                    print("Dead Snake Food Eaten")
+                    
+                    score += 1
+                    scoreLabel.text = "\(score)"
+                
+                    self.growSnake()
+                    
+                    //
+                    deadSnakeFood[x].position = CGPoint(x: -50, y: -50)
+                    deadSnakeFood.remove(at: x)
+                    break
+                }
+            }
+        }
     }
     
     func growSnake()
@@ -379,13 +383,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate
     
     func killSnake(snakeNumber: Int)
     {
-        //self.isPaused = true
         lost = true
         if(snakeNumber == 1)
         {
-            for i in 0...snake1.count - 1 {
-              //  positionArray[i].x = snake1[i].position.x + randomValue(min: -10.0, max: 10.0)
-              //  positionArray[i].y = snake1[i].position.y + randomValue(min: -10.0, max: 10.0)
+            for i in 0...snake1.count - 1
+            {
+                positionArray[i] = snake1[i].position
                 snake1[i].removeAllActions()
                 
                 //When lost gives broken effect
@@ -393,6 +396,53 @@ class GameScene: SKScene, SKPhysicsContactDelegate
                 snake1[i].position.y = snake1[i].position.y + randomValue(min: -10.0, max: 10.0)
             }
         }
+        self.createFoodOnSnakeKill(snakeNumber: snakeNumber)
+        //self.gameOver()
+    }
+    
+    func createFoodOnSnakeKill(snakeNumber: Int)
+    {
+        if(snakeNumber == 1)
+        {
+            for x in 0...(snake1.count - 1)
+            {
+                var snakeFood1 = SKShapeNode()
+                snakeFood1 = self.foodCreate()
+                snakeFood1.fillColor = snake1[0].fillColor
+                snakeFood1.position.x = positionArray[x].x + randomValue(min: -15.0, max: 0.0)
+                snakeFood1.position.y = positionArray[x].y + randomValue(min: -15.0, max: 0.0)
+                deadSnakeFood.append(snakeFood1)
+                
+                var snakeFood2 = SKShapeNode()
+                snakeFood2 = self.foodCreate()
+                snakeFood2.fillColor = snake1[0].fillColor
+                snakeFood2.position.x = positionArray[x].x + randomValue(min: 0.0, max: 15.0)
+                snakeFood2.position.y = positionArray[x].y + randomValue(min: 0.0, max: 15.0)
+                deadSnakeFood.append(snakeFood2)
+            }
+            
+            snake1.removeAll()
+        }
+        
+        self.removeAllActions()
+        self.removeAllChildren()
+        score = 0
+        
+        if(!deadSnakeFood.isEmpty)
+        {
+            NSLog("Adding snakefood")
+            for y in 0...deadSnakeFood.count-1
+            {
+                self.addChild(deadSnakeFood[y])
+            }
+        }
+        
+        startGame()
+    }
+    
+    func gameOver()
+    {
+        lost = true
         
         restartBtn = createButton()
         restartBtn.setScale(0)
@@ -420,6 +470,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate
     {
         snake1.removeAll()
         food.removeAll()
+        deadSnakeFood.removeAll()
         
         self.removeAllChildren()
         self.removeAllActions()
