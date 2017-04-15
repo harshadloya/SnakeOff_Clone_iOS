@@ -13,7 +13,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate
 {
     var score = Int()
     var scoreLabel = SKLabelNode()
+    var scoreTextLabel = SKLabelNode()
     var highScoreLabel = SKLabelNode()
+    var highScoreTextLabel = SKLabelNode()
+    
     var circle = SKShapeNode()
 
     var snake1 = Array<SKShapeNode>()
@@ -47,13 +50,29 @@ class GameScene: SKScene, SKPhysicsContactDelegate
     
     func startGame()
     {
-        self.physicsWorld.contactDelegate = self
+        //self.physicsWorld.contactDelegate = self
+        
+        screenWidth = self.frame.width
+        screenHeight = self.frame.height
         
         self.createController()
         self.backgroundColor = SKColor.white
         
-        screenWidth = self.frame.width
-        screenHeight = self.frame.height
+        scoreTextLabel = createScoreLabel(name: "text")
+        self.addChild(scoreTextLabel)
+        
+        scoreLabel = createScoreLabel(name: "number")
+        self.addChild(scoreLabel)
+        
+        highScoreTextLabel = createScoreLabel(name: "text")
+        highScoreTextLabel.text = "HighScore"
+        highScoreTextLabel.position.x += 100
+        self.addChild(highScoreTextLabel)
+        
+        highScoreLabel = createScoreLabel(name: "number")
+        highScoreLabel.position.x += 100
+        self.addChild(highScoreLabel)
+        
         
         for i in 0...4
         {
@@ -132,7 +151,29 @@ class GameScene: SKScene, SKPhysicsContactDelegate
         }
     }
     
-    func createController(){
+    func createScoreLabel(name: String) -> SKLabelNode
+    {
+        
+        let label = SKLabelNode()
+        
+        if name == "text"
+        {
+            label.position = CGPoint(x: screenWidth / 2 + screenWidth / 4, y: screenHeight / 2 + screenHeight / 2.5)
+            label.text = "Score"
+        }
+        else if name == "number"
+        {
+            label.position = CGPoint(x: screenWidth / 2 + screenWidth / 4, y: screenHeight / 2 + screenHeight / 3)
+            label.text = "\(score)"
+        }
+        label.fontColor = UIColor.black
+        label.fontSize = 24
+        
+        return label
+    }
+    
+    func createController()
+    {
     
         self.base = SKShapeNode(circleOfRadius: 70)
         self.base.fillColor = SKColor.darkGray
@@ -324,7 +365,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate
         circle2.position.y = snake1[snake1.count-1].position.y
         
         snake1.append(circle2)
-        print(snake1.count-1)
         self.addChild(snake1[snake1.count-1])
     }
     
@@ -368,6 +408,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate
         self.removeAllActions()
         
         lost = false
+        score = 0
         
         startGame()
     }
