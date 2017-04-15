@@ -17,6 +17,7 @@
 		112F51E61E9714130076C450 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 112F51E41E9714130076C450 /* LaunchScreen.storyboard */; };
 		112F51F11E9714150076C450 /* p06_npradha2Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 112F51F01E9714150076C450 /* p06_npradha2Tests.swift */; };
 		112F51FC1E9714150076C450 /* p06_npradha2UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 112F51FB1E9714150076C450 /* p06_npradha2UITests.swift */; };
+		AF6CA3281EA1AAFE00FF4589 /* GameMenuScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF6CA3271EA1AAFE00FF4589 /* GameMenuScene.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,6 +54,7 @@
 		112F51F71E9714150076C450 /* p06_npradha2UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = p06_npradha2UITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		112F51FB1E9714150076C450 /* p06_npradha2UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = p06_npradha2UITests.swift; sourceTree = "<group>"; };
 		112F51FD1E9714150076C450 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AF6CA3271EA1AAFE00FF4589 /* GameMenuScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameMenuScene.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,6 +108,7 @@
 				112F51D51E9714120076C450 /* AppDelegate.swift */,
 				112F51D71E9714120076C450 /* GameScene.sks */,
 				112F51D91E9714120076C450 /* Actions.sks */,
+				AF6CA3271EA1AAFE00FF4589 /* GameMenuScene.swift */,
 				112F51DB1E9714120076C450 /* GameScene.swift */,
 				112F51DD1E9714120076C450 /* GameViewController.swift */,
 				112F51DF1E9714120076C450 /* Main.storyboard */,
@@ -272,6 +275,7 @@
 			files = (
 				112F51DC1E9714120076C450 /* GameScene.swift in Sources */,
 				112F51DE1E9714120076C450 /* GameViewController.swift in Sources */,
+				AF6CA3281EA1AAFE00FF4589 /* GameMenuScene.swift in Sources */,
 				112F51D61E9714120076C450 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -517,6 +521,7 @@
 				112F52021E9714150076C450 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		112F52031E9714150076C450 /* Build configuration list for PBXNativeTarget "p06_npradha2Tests" */ = {
 			isa = XCConfigurationList;
@@ -525,6 +530,7 @@
 				112F52051E9714150076C450 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		112F52061E9714150076C450 /* Build configuration list for PBXNativeTarget "p06_npradha2UITests" */ = {
 			isa = XCConfigurationList;
@@ -533,6 +539,7 @@
 				112F52081E9714150076C450 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

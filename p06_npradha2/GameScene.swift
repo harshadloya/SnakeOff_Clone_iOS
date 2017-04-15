@@ -35,6 +35,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate
     
     var lost = Bool()
     var restartBtn = SKSpriteNode()
+    var exitBtn = SKSpriteNode()
 
     
     /*
@@ -256,6 +257,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate
                 {
                     restartGame()
                 }
+                
+                if exitBtn.contains(location)
+                {
+                    let gameMenuScene = GameMenuScene()
+                    gameMenuScene.size = (self.view?.bounds.size)!
+                    gameMenuScene.scaleMode = .aspectFill
+                    self.view?.presentScene(gameMenuScene)
+                }
             }
         }
     }
@@ -384,19 +393,27 @@ class GameScene: SKScene, SKPhysicsContactDelegate
                 snake1[i].position.y = snake1[i].position.y + randomValue(min: -10.0, max: 10.0)
             }
         }
-        restartButton()
-    }
-    
-    func restartButton()
-    {
-        restartBtn = SKSpriteNode(color: UIColor.gray, size: CGSize(width: 100, height: 100))
-        restartBtn.size = CGSize(width: 100, height: 50)
-        restartBtn.position = CGPoint(x: screenWidth / 2, y: screenHeight / 2)
-        restartBtn.zPosition = 5
+        
+        restartBtn = createButton()
         restartBtn.setScale(0)
         self.addChild(restartBtn)
-        
         restartBtn.run(SKAction.scale(to: 1, duration: TimeInterval(0.5)))
+        
+        
+        exitBtn = createButton()
+        exitBtn.position.x += 200
+        exitBtn.setScale(0)
+        self.addChild(exitBtn)
+        exitBtn.run(SKAction.scale(to: 1, duration: TimeInterval(0.5)))
+    }
+    
+    func createButton() -> SKSpriteNode
+    {
+        let button = SKSpriteNode(color: UIColor.gray, size: CGSize(width: 100, height: 50))
+        button.position = CGPoint(x: screenWidth / 2 - 100, y: screenHeight / 2)
+        button.zPosition = 5
+        
+        return button
     }
     
     func restartGame()

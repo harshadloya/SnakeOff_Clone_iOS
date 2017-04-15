@@ -17,7 +17,7 @@ class GameViewController: UIViewController {
         
         let view = self.view as! SKView
         //  let scene = GameScene(size: CGSize(width:750 , height:1344))
-        let scene = GameScene()
+        let scene = GameMenuScene()
         scene.size = self.view.bounds.size
         scene.backgroundColor = SKColor.gray
         
