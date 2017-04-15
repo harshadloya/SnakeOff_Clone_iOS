@@ -12,19 +12,20 @@ import GameplayKit
 class GameMenuScene: SKScene
 {
     var button1 = SKSpriteNode()
-    //var button2 = SKSpriteNode()
+    var button2 = SKSpriteNode()
     
     override func didMove(to view: SKView)
     {
         button1 = self.createButton()
         self.addChild(button1)
         
-        /*
-         Add new buttons in similar way for giving options
+        
+       //  Add new buttons in similar way for giving options
         button2 = self.createButton()
         button2.position.y -= 50
+        button2.color = UIColor.blue
         self.addChild(button2)
-        */
+        
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?)
