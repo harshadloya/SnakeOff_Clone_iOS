@@ -529,7 +529,8 @@ class TwoPlayers: SKScene, SKPhysicsContactDelegate
         {
             for x in 0...deadSnakeFood.count-1
             {
-                if(Int(snake1[0].position.x) >= Int(deadSnakeFood[x].position.x) - 15 &&
+                if(!deadSnakeFood[x].isHidden &&
+                    Int(snake1[0].position.x) >= Int(deadSnakeFood[x].position.x) - 15 &&
                     Int(snake1[0].position.x) <= Int(deadSnakeFood[x].position.x) + 15 &&
                     Int(snake1[0].position.y) >= Int(deadSnakeFood[x].position.y) - 15 &&
                     Int(snake1[0].position.y) <= Int(deadSnakeFood[x].position.y) + 15)
@@ -542,7 +543,8 @@ class TwoPlayers: SKScene, SKPhysicsContactDelegate
                     break
                 }
                 
-                if(Int(snake2[0].position.x) >= Int(deadSnakeFood[x].position.x) - 15 &&
+                if(!deadSnakeFood[x].isHidden &&
+                    Int(snake2[0].position.x) >= Int(deadSnakeFood[x].position.x) - 15 &&
                     Int(snake2[0].position.x) <= Int(deadSnakeFood[x].position.x) + 15 &&
                     Int(snake2[0].position.y) >= Int(deadSnakeFood[x].position.y) - 15 &&
                     Int(snake2[0].position.y) <= Int(deadSnakeFood[x].position.y) + 15)
@@ -651,6 +653,7 @@ class TwoPlayers: SKScene, SKPhysicsContactDelegate
                 snakeFood1.fillColor = snake1[0].fillColor
                 snakeFood1.position.x = snake1[x].position.x + randomValue(min: -15.0, max: 15.0)
                 snakeFood1.position.y = snake1[x].position.y + randomValue(min: -15.0, max: 15.0)
+                snakeFood1.run(SKAction.sequence([SKAction.wait(forDuration: 5.0),SKAction.fadeOut(withDuration: 10), SKAction.hide()]))
                 deadSnakeFood.append(snakeFood1)
                 snake1[x].removeFromParent()
             }
@@ -665,6 +668,7 @@ class TwoPlayers: SKScene, SKPhysicsContactDelegate
                 snakeFood2.fillColor = snake2[0].fillColor
                 snakeFood2.position.x = snake2[x].position.x + randomValue(min: -15.0, max: 15.0)
                 snakeFood2.position.y = snake2[x].position.y + randomValue(min: -15.0, max: 15.0)
+                snakeFood2.run(SKAction.sequence([SKAction.wait(forDuration: 5.0),SKAction.fadeOut(withDuration: 10), SKAction.hide()]))
                 deadSnakeFood.append(snakeFood2)
                 snake2[x].removeFromParent()
             }

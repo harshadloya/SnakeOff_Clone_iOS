@@ -379,7 +379,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate
             for x in 0...deadSnakeFood.count-1
             {
                 //print("head.x:",Int(snake1[0].position.x) ," food.x:",Int(deadSnakeFood[x].position.x), " head.y:",Int(snake1[0].position.y), " food.y:",Int(deadSnakeFood[x].position.y))
-                if(Int(snake1[0].position.x) >= Int(deadSnakeFood[x].position.x) - 15 &&
+                if(!deadSnakeFood[x].isHidden &&
+                    Int(snake1[0].position.x) >= Int(deadSnakeFood[x].position.x) - 15 &&
                     Int(snake1[0].position.x) <= Int(deadSnakeFood[x].position.x) + 15 &&
                     Int(snake1[0].position.y) >= Int(deadSnakeFood[x].position.y) - 15 &&
                     Int(snake1[0].position.y) <= Int(deadSnakeFood[x].position.y) + 15)
@@ -459,6 +460,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate
                 snakeFood1.fillColor = snake1[0].fillColor
                 snakeFood1.position.x = snake1[x].position.x + randomValue(min: -15.0, max: 15.0)
                 snakeFood1.position.y = snake1[x].position.y + randomValue(min: -15.0, max: 15.0)
+                snakeFood1.run(SKAction.sequence([SKAction.wait(forDuration: 5.0),SKAction.fadeOut(withDuration: 10), SKAction.hide()]))
                 deadSnakeFood.append(snakeFood1)
                 snake1[x].removeFromParent()
                /* var snakeFood2 = SKShapeNode()
@@ -477,7 +479,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate
          //   NSLog("Adding snakefood")
             for y in 0...deadSnakeFood.count-1
             {
-                if(!deadSnakeFood[y].inParentHierarchy(self)){
+                if(!deadSnakeFood[y].inParentHierarchy(self) && !deadSnakeFood[y].isHidden){
                     self.addChild(deadSnakeFood[y])
                 }
             }
