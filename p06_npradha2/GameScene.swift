@@ -130,7 +130,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate
         for i in 0...4
         {
             var circle2 = SKShapeNode()
-            circle2 = self.snake()
+            if(i == 0){
+                circle2 = self.snakeHead()
+            }
+            else{
+                circle2 = self.snake()
+            }
             circle2.position.x = circle2.position.x - CGFloat(i * 25)
             circle2.position.y = screenHeight / 2
             
@@ -146,6 +151,55 @@ class GameScene: SKScene, SKPhysicsContactDelegate
                 self.addChild(snake1[i])
             }
         }
+    }
+    
+    func snakeHead() -> SKShapeNode
+    {
+        self.circle = SKShapeNode(circleOfRadius: 10)
+        self.circle.position = CGPoint(x: 250, y:100)
+        let outerBody = SKShapeNode(circleOfRadius: 10)
+        outerBody.fillColor = SKColor.red
+        outerBody.strokeColor = SKColor.red
+        let innerBody = SKShapeNode(circleOfRadius: 7)
+        innerBody.fillColor = SKColor.orange
+        innerBody.strokeColor = SKColor.orange
+        let leftEye = SKShapeNode(circleOfRadius: 2)
+        leftEye.fillColor = SKColor.black
+        leftEye.strokeColor = SKColor.black
+        leftEye.position.x = 6
+        leftEye.position.y = 5
+        let rightEye = SKShapeNode(circleOfRadius: 2)
+        rightEye.fillColor = SKColor.black
+        rightEye.strokeColor = SKColor.black
+        rightEye.position.x = 6
+        rightEye.position.y = -5
+        
+        self.circle.addChild(outerBody)
+        self.circle.addChild(innerBody)
+        self.circle.addChild(leftEye)
+        self.circle.addChild(rightEye)
+        
+        return self.circle;
+        
+    }
+    
+    func snake() -> SKShapeNode
+    {
+        self.circle = SKShapeNode(circleOfRadius: 10 )
+        self.circle.position = CGPoint(x: 250, y:100)
+        
+        let outerBody = SKShapeNode(circleOfRadius: 10 )
+        outerBody.fillColor = SKColor.red
+        outerBody.strokeColor = SKColor.red
+        
+        let innerBody = SKShapeNode(circleOfRadius: 7 )
+        innerBody.fillColor = SKColor.orange
+        innerBody.strokeColor = SKColor.orange
+        
+        self.circle.addChild(outerBody)
+        self.circle.addChild(innerBody)
+        return self.circle;
+        
     }
     
     func createScoreLabel(name: String) -> SKLabelNode
@@ -194,16 +248,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate
         self.addChild(speedController)
     }
 
-    func snake() -> SKShapeNode
-    {
-        self.circle = SKShapeNode(circleOfRadius: 10 )
-        self.circle.position = CGPoint(x: 250, y:100)
-        self.circle.fillColor = SKColor.cyan
-        self.circle.strokeColor = SKColor.brown
-        
-        return self.circle;
-
-    }
+    
     
     func foodCreate() -> SKShapeNode
     {
@@ -288,10 +333,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate
                 
             let length: CGFloat = base.frame.size.height / 5
             
-             xDist = sin(angle - 1.57079633) * length
-             yDist = cos(angle - 1.57079633) * length
+             xDist = sin(angle - CGFloat(M_PI) / 2.0) * length
+             yDist = cos(angle - CGFloat(M_PI) / 2.0) * length
 
             controller.position = CGPoint(x:base.position.x - xDist, y:base.position.y + yDist)
+                snake1[0].zRotation = angle
             
             }
             else{
@@ -456,8 +502,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate
             {
                 var snakeFood1 = SKShapeNode()
               //  snakeFood1 = self.foodCreate()
-                snakeFood1 = SKShapeNode(circleOfRadius: 10)
-                snakeFood1.fillColor = snake1[0].fillColor
+               // snakeFood1 = SKShapeNode(circleOfRadius: 10)
+              //  snakeFood1.fillColor = snake1[0].fillColor
+                snakeFood1 = self.snake()
                 snakeFood1.position.x = snake1[x].position.x + randomValue(min: -15.0, max: 15.0)
                 snakeFood1.position.y = snake1[x].position.y + randomValue(min: -15.0, max: 15.0)
                 snakeFood1.run(SKAction.sequence([SKAction.wait(forDuration: 5.0),SKAction.fadeOut(withDuration: 10), SKAction.hide()]))
