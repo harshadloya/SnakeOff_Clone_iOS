@@ -11,19 +11,22 @@ import GameplayKit
 
 class GameMenuScene: SKScene
 {
-    var button1 = SKSpriteNode()
-    var button2 = SKSpriteNode()
+    //var button1 = SKSpriteNode()
+    //var button2 = SKSpriteNode()
+    var button1 = SKLabelNode()
+    var button2 = SKLabelNode()
     
     override func didMove(to view: SKView)
     {
         button1 = self.createButton()
+        button1.text = "One Player"
         self.addChild(button1)
         
         
        //  Add new buttons in similar way for giving options
         button2 = self.createButton()
         button2.position.y -= 50
-        button2.color = UIColor.blue
+        button2.text = "Two Players"
         self.addChild(button2)
         
     }
@@ -50,9 +53,10 @@ class GameMenuScene: SKScene
         }
     }
     
-    func createButton() -> SKSpriteNode
+    func createButton() -> SKLabelNode
     {
-        let newButton = SKSpriteNode(color: UIColor.red, size: CGSize(width: 100, height: 40))
+        //let newButton = SKSpriteNode(color: UIColor.red, size: CGSize(width: 100, height: 40))
+        let newButton = SKLabelNode()
         newButton.position = CGPoint(x: self.frame.width / 2, y: self.frame.height - 150)
         
         return newButton

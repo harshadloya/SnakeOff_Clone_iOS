@@ -73,23 +73,28 @@ class TwoPlayers: SKScene, SKPhysicsContactDelegate
     
     func startGame()
     {
-        //self.physicsWorld.contactDelegate = self
         screenWidth = self.frame.width
         screenHeight = self.frame.height
         
         self.createController()
         self.backgroundColor = SKColor.white
+        
         //player1 score labels
-        player1TextLabel = createplayer1Label(name: "text")
+        player1TextLabel = createScoreLabel(name: "text", player: 1)
+        player1TextLabel.text = "Player 1"
         self.addChild(player1TextLabel)
         
-        player1Label = createplayer1Label(name: "number")
+        player1Label = createScoreLabel(name: "number", player: 1)
+        player1Label.text = "\(player1)"
         self.addChild(player1Label)
+        
         //player2 score labels
-        player2TextLabel = createplayer2Label(name: "text")
+        player2TextLabel = createScoreLabel(name: "text", player: 2)
+        player2TextLabel.text = "Player 2"
         self.addChild(player2TextLabel)
         
-        player2Label = createplayer2Label(name: "number")
+        player2Label = createScoreLabel(name: "number", player: 2)
+        player2Label.text = "\(player2)"
         self.addChild(player2Label)
         
         player1SpeedBooster = 1.5
@@ -108,6 +113,7 @@ class TwoPlayers: SKScene, SKPhysicsContactDelegate
         self.player2ControllerMoved = false
         self.player2SpeedControllerPressed = false
         
+        //Creating fixed food on screen
         for _ in 0...14
         {
             var snakeFood = SKShapeNode()
@@ -131,40 +137,58 @@ class TwoPlayers: SKScene, SKPhysicsContactDelegate
 
     func createSnake(player : Int)
     {
-        if(player == 1){
-        for i in 0...4
+        if(player == 1)
         {
-            var circle2 = SKShapeNode()
-            circle2 = self.snake(player : 1)
-            circle2.position.x = circle2.position.x - CGFloat(i * 15)
-            circle2.position.y = screenHeight / 2
-            
-            snake1.append(circle2)
-        }
-        
-        if(!snake1.isEmpty)
-        {
-            NSLog("Adding snake")
-            for i in 0...snake1.count-1
-            {
-                self.addChild(snake1[i])
-            }
-        }
-        }
-        else{
             for i in 0...4
             {
                 var circle2 = SKShapeNode()
-                circle2 = self.snake(player : 2)
-                circle2.position.x = circle2.position.x + CGFloat(i * 15)
+                if(i == 0)
+                {
+                    circle2 = self.snakeHead(player: player)
+                }
+                else
+                {
+                    circle2 = self.snake(player: player, type: "new")
+                }
+                circle2.position.x = circle2.position.x - CGFloat(i * 25)
                 circle2.position.y = screenHeight / 2
+                
+                snake1.append(circle2)
+            }
+        
+            if(!snake1.isEmpty)
+            {
+                NSLog("Adding Player 1 Snake")
+                for i in 0...snake1.count-1
+                {
+                    self.addChild(snake1[i])
+                }
+            }
+        }
+        else
+        {
+            for i in 0...4
+            {
+                var circle2 = SKShapeNode()
+                
+                if(i == 0)
+                {
+                    circle2 = self.snakeHead(player: player)
+                }
+                else
+                {
+                    circle2 = self.snake(player: player, type: "new")
+                }
+                
+                circle2.position.x = circle2.position.x + CGFloat(i * 15)
+                circle2.position.y = screenHeight / 2 - 100
                 
                 snake2.append(circle2)
             }
             
             if(!snake2.isEmpty)
             {
-                NSLog("Adding snake")
+                NSLog("Adding Player 2 Snake")
                 for i in 0...snake2.count-1
                 {
                     self.addChild(snake2[i])
@@ -173,41 +197,32 @@ class TwoPlayers: SKScene, SKPhysicsContactDelegate
         }
     }
     
-    func createplayer1Label(name: String) -> SKLabelNode
+    func createScoreLabel(name: String, player: Int) -> SKLabelNode
     {
         
         let label = SKLabelNode()
         
-        if name == "text"
+        if(player == 1)
         {
-            label.position = CGPoint(x: screenWidth / 5 , y: screenHeight / 2 + screenHeight / 2.5)
-            label.text = "player1"
+            if name == "text"
+            {
+                label.position = CGPoint(x: screenWidth / 5 , y: screenHeight / 2 + screenHeight / 2.5)
+            }
+            else if name == "number"
+            {
+                label.position = CGPoint(x: screenWidth / 5, y: screenHeight / 2 + screenHeight / 3)
+            }
         }
-        else if name == "number"
+        else
         {
-            label.position = CGPoint(x: screenWidth / 5, y: screenHeight / 2 + screenHeight / 3)
-            label.text = "\(player1)"
-        }
-        label.fontColor = UIColor.black
-        label.fontSize = 24
-        
-        return label
-    }
-    
-    func createplayer2Label(name: String) -> SKLabelNode
-    {
-        
-        let label = SKLabelNode()
-        
-        if name == "text"
-        {
-            label.position = CGPoint(x: screenWidth - screenWidth / 5 , y: screenHeight / 2 + screenHeight / 2.5)
-            label.text = "player2"
-        }
-        else if name == "number"
-        {
-            label.position = CGPoint(x: screenWidth - screenWidth / 5, y: screenHeight / 2 + screenHeight / 3)
-            label.text = "\(player2)"
+            if name == "text"
+            {
+                label.position = CGPoint(x: screenWidth - screenWidth / 5 , y: screenHeight / 2 + screenHeight / 2.5)
+            }
+            else if name == "number"
+            {
+                label.position = CGPoint(x: screenWidth - screenWidth / 5, y: screenHeight / 2 + screenHeight / 3)
+            }
         }
         label.fontColor = UIColor.black
         label.fontSize = 24
@@ -262,18 +277,104 @@ class TwoPlayers: SKScene, SKPhysicsContactDelegate
         self.addChild(player2SpeedController)
     }
     
-    func snake(player : Int) -> SKShapeNode
+    func snakeHead(player: Int) -> SKShapeNode
     {
-        self.circle = SKShapeNode(circleOfRadius: 10 )
-        self.circle.strokeColor = SKColor.brown
-        if(player == 1){
-            self.circle.position = CGPoint(x: 250, y:100)
-            self.circle.fillColor = SKColor.cyan
+        self.circle = SKShapeNode(circleOfRadius: 10)
+
+        let outerBody = SKShapeNode(circleOfRadius: 10)
+        let innerBody = SKShapeNode(circleOfRadius: 7)
+        let leftEye = SKShapeNode(circleOfRadius: 2)
+        let rightEye = SKShapeNode(circleOfRadius: 2)
+        
+        
+        if(player == 1)
+        {
+            self.circle.position = CGPoint(x: 150, y:100)
+            outerBody.fillColor = SKColor.blue
+            outerBody.strokeColor = SKColor.blue
+        
+            innerBody.fillColor = SKColor.cyan
+            innerBody.strokeColor = SKColor.cyan
+            
+            leftEye.position.x = 6
+            leftEye.position.y = 5
+            
+            rightEye.position.x = 6
+            rightEye.position.y = -5
         }
-        else{
-            self.circle.position = CGPoint(x: screenWidth - 250, y:100)
-            self.circle.fillColor = SKColor.blue
+        else
+        {
+            self.circle.position = CGPoint(x: screenWidth - 150, y:100)
+            outerBody.fillColor = SKColor.red
+            outerBody.strokeColor = SKColor.red
+            
+            innerBody.fillColor = SKColor.orange
+            innerBody.strokeColor = SKColor.orange
+            
+            leftEye.position.x = -6
+            leftEye.position.y = 5
+            rightEye.position.x = -6
+            rightEye.position.y = -5
         }
+        
+        leftEye.fillColor = SKColor.black
+        leftEye.strokeColor = SKColor.black
+        
+        rightEye.fillColor = SKColor.black
+        rightEye.strokeColor = SKColor.black
+        
+        
+        self.circle.addChild(outerBody)
+        self.circle.addChild(innerBody)
+        self.circle.addChild(leftEye)
+        self.circle.addChild(rightEye)
+        
+        return self.circle;
+        
+    }
+    
+    func snake(player : Int, type: String) -> SKShapeNode
+    {
+       
+        var innerBody = SKShapeNode()
+        var outerBody = SKShapeNode()
+        
+        if(type == "new")
+        {
+            self.circle = SKShapeNode(circleOfRadius: 10)
+            outerBody = SKShapeNode(circleOfRadius: 10)
+            innerBody = SKShapeNode(circleOfRadius: 7)
+        }
+        else if(type == "dead")
+        {
+            self.circle = SKShapeNode(circleOfRadius: 6)
+            outerBody = SKShapeNode(circleOfRadius: 6)
+            innerBody = SKShapeNode(circleOfRadius: 4)
+        }
+        
+        if(player == 1)
+        {
+            self.circle.position = CGPoint(x: 150, y:100)
+            //self.circle.fillColor = SKColor.cyan
+            outerBody.fillColor = SKColor.blue
+            outerBody.strokeColor = SKColor.blue
+            
+            innerBody.fillColor = SKColor.cyan
+            innerBody.strokeColor = SKColor.cyan
+        }
+        else
+        {
+            self.circle.position = CGPoint(x: screenWidth - 150, y:100)
+            //self.circle.fillColor = SKColor.blue
+            outerBody.fillColor = SKColor.red
+            outerBody.strokeColor = SKColor.red
+            
+            innerBody.fillColor = SKColor.orange
+            innerBody.strokeColor = SKColor.orange
+        }
+        
+        self.circle.addChild(outerBody)
+        self.circle.addChild(innerBody)
         return self.circle;
         
     }
@@ -281,11 +382,20 @@ class TwoPlayers: SKScene, SKPhysicsContactDelegate
     func foodCreate() -> SKShapeNode
     {
         let foodCircle = SKShapeNode(circleOfRadius: 5)
-        foodCircle.position = CGPoint(x: 250, y:100)
-        foodCircle.fillColor = SKColor.green
-        foodCircle.strokeColor = SKColor.brown
+        foodCircle.position = CGPoint(x: 150, y:100)
+        foodCircle.fillColor = self.randomColor()
+        foodCircle.strokeColor = SKColor.black
         
         return foodCircle;
+    }
+    
+    func randomColor() -> UIColor
+    {
+        let randomRed = randomValue(min: 0, max: 1)
+        let randomGreen = randomValue(min: 0, max: 1)
+        let randomBlue = randomValue(min: 0, max: 1)
+        
+        return UIColor(red: randomRed, green: randomGreen, blue: randomBlue, alpha: 1.0)
     }
     
     func randomNumber(min : Int, max : Int) -> Int
@@ -308,6 +418,7 @@ class TwoPlayers: SKScene, SKPhysicsContactDelegate
         for touch in touches
         {
             let location  = touch.location(in: self)
+            
             //player 1 controllers
             if(player1Controller.contains(location))
             {
@@ -317,14 +428,18 @@ class TwoPlayers: SKScene, SKPhysicsContactDelegate
             {
                 player1ControllerPressed = false
             }
-            if(player1SpeedController.contains(location)){
+            
+            if(player1SpeedController.contains(location))
+            {
                 player1SpeedControllerPressed = true
                 player1SpeedBooster = 2.5
             }
-            else{
+            else
+            {
                 player1SpeedControllerPressed = false
                 player1SpeedBooster = 1.5
             }
+            
             //player 2 controllers
             if(player2Controller.contains(location))
             {
@@ -334,16 +449,20 @@ class TwoPlayers: SKScene, SKPhysicsContactDelegate
             {
                 player2ControllerPressed = false
             }
+            
             if(player2SpeedController.contains(location)){
                 player2SpeedControllerPressed = true
                 player2SpeedBooster = 2.5
             }
-            else{
+            else
+            {
                 player2SpeedControllerPressed = false
                 player2SpeedBooster = 1.5
             }
+            
             //if game over
-            if(player1Lost || player2Lost){
+            if(player1Lost || player2Lost)
+            {
                 if (restartBtn.contains(location))
                 {
                     restartGame()
@@ -354,55 +473,63 @@ class TwoPlayers: SKScene, SKPhysicsContactDelegate
                     let gameMenuScene = GameMenuScene()
                     gameMenuScene.size = (self.view?.bounds.size)!
                     gameMenuScene.scaleMode = .aspectFill
+                    gameMenuScene.backgroundColor = SKColor.gray
                     self.view?.presentScene(gameMenuScene)
                 }
             }
         }
     }
     
-    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        
-        for touch in touches{
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?)
+    {
+        for touch in touches
+        {
             let location = touch.location(in: self)
+            
             //player 1 direction controller
-            if(player1ControllerPressed){
+            if(player1ControllerPressed)
+            {
                 player1ControllerMoved = true
                 let v = CGVector(dx: location.x - player1Base.position.x, dy: location.y - player1Base.position.y)
                 let angle = atan2(v.dy, v.dx)
                 
                 let length: CGFloat = player1Base.frame.size.height / 5
                 
-                player1xDist = sin(angle - 1.57079633) * length
-                player1yDist = cos(angle - 1.57079633) * length
+                player1xDist = sin(angle - CGFloat(M_PI) / 2.0) * length
+                player1yDist = cos(angle - CGFloat(M_PI) / 2.0) * length
                 
                 player1Controller.position = CGPoint(x:player1Base.position.x - player1xDist, y:player1Base.position.y + player1yDist)
                 
             }
-            else{
+            else
+            {
                 player1ControllerMoved = false
             }
             
             //player 2 direction controller
-            if(player2ControllerPressed){
+            if(player2ControllerPressed)
+            {
                 player2ControllerMoved = true
                 let v = CGVector(dx: location.x - player2Base.position.x, dy: location.y - player2Base.position.y)
                 let angle = atan2(v.dy, v.dx)
                 
                 let length: CGFloat = player1Base.frame.size.height / 5
                 
-                player2xDist = sin(angle - 1.57079633) * length
-                player2yDist = cos(angle - 1.57079633) * length
+                player2xDist = sin(angle - CGFloat(M_PI) / 2.0) * length
+                player2yDist = cos(angle - CGFloat(M_PI) / 2.0) * length
                 
                 player2Controller.position = CGPoint(x:player2Base.position.x - player2xDist, y:player2Base.position.y + player2yDist)
                 
             }
-            else{
+            else
+            {
                 player2ControllerMoved = false
             }
         }
     }
     
-    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?)
+    {
         self.player1Controller.position = self.player1Base.position
         self.player1SpeedBooster = 1.5
         self.player1SpeedControllerPressed = false
@@ -457,6 +584,9 @@ class TwoPlayers: SKScene, SKPhysicsContactDelegate
             snake2[i].run(moveAction)
         }
         
+        //Check if Snake 1 touches Snake 2
+        self.checkSnakeCollision()
+        
         //if snake head touches screen boundries
         if(snake1[0].position.y < 0){
             self.killSnake(snakeNumber: 1)
@@ -492,6 +622,51 @@ class TwoPlayers: SKScene, SKPhysicsContactDelegate
 
     }
     
+    func checkSnakeCollision()
+    {
+        if(Int(snake1[0].position.x) >= Int(snake2[0].position.x) - 15 &&
+            Int(snake1[0].position.x) <= Int(snake2[0].position.x) + 15 &&
+            Int(snake1[0].position.y) >= Int(snake2[0].position.y) - 15 &&
+            Int(snake1[0].position.y) <= Int(snake2[0].position.y) + 15)
+        {
+            if(snake1.count > snake2.count)
+            {
+                self.killSnake(snakeNumber: 2)
+            }
+            else if(snake1.count < snake2.count)
+            {
+                self.killSnake(snakeNumber: 1)
+            }
+            return
+        }
+        
+        //checking snake 1 collided with snake 2
+        for x in 0...snake2.count-1
+        {
+            if(Int(snake1[0].position.x) >= Int(snake2[x].position.x) - 15 &&
+                Int(snake1[0].position.x) <= Int(snake2[x].position.x) + 15 &&
+                Int(snake1[0].position.y) >= Int(snake2[x].position.y) - 15 &&
+                Int(snake1[0].position.y) <= Int(snake2[x].position.y) + 15)
+            {
+                self.killSnake(snakeNumber: 1)
+                return
+            }
+        }
+        
+        //checking snake 2 collided with snake 1
+        for x in 0...snake1.count-1
+        {
+            if(Int(snake2[0].position.x) >= Int(snake1[x].position.x) - 15 &&
+                Int(snake2[0].position.x) <= Int(snake1[x].position.x) + 15 &&
+                Int(snake2[0].position.y) >= Int(snake1[x].position.y) - 15 &&
+                Int(snake2[0].position.y) <= Int(snake1[x].position.y) + 15)
+            {
+                self.killSnake(snakeNumber: 2)
+                return
+            }
+        }
+    }
+    
     func checkFoodEaten()
     {
         //checking if food was eaten
@@ -502,10 +677,11 @@ class TwoPlayers: SKScene, SKPhysicsContactDelegate
                 Int(snake1[0].position.y) >= Int(food[x].position.y) - 15 &&
                 Int(snake1[0].position.y) <= Int(food[x].position.y) + 15)
             {
-                print("Food Eaten")
+                print("Food Eaten by Player 1")
                 food[x].position = CGPoint(x: randomValue(min: 20, max: screenWidth - 20), y: randomValue(min: 20, max: screenHeight - 20))
+                food[x].fillColor = self.randomColor()
                 
-                self.updateplayer1()
+                self.updatePlayer1Score()
                 
                 self.growSnake(player: 1)
             }
@@ -515,10 +691,11 @@ class TwoPlayers: SKScene, SKPhysicsContactDelegate
                 Int(snake2[0].position.y) >= Int(food[x].position.y) - 15 &&
                 Int(snake2[0].position.y) <= Int(food[x].position.y) + 15)
             {
-                print("Food Eaten")
+                print("Food Eaten by Player 2")
                 food[x].position = CGPoint(x: randomValue(min: 20, max: screenWidth - 20), y: randomValue(min: 20, max: screenHeight - 20))
+                food[x].fillColor = self.randomColor()
                 
-                self.updateplayer2()
+                self.updatePlayer2Score()
                 
                 self.growSnake(player: 2)
             }
@@ -536,7 +713,7 @@ class TwoPlayers: SKScene, SKPhysicsContactDelegate
                     Int(snake1[0].position.y) <= Int(deadSnakeFood[x].position.y) + 15)
                 {
                     //  print("Dead Snake Food Eaten")
-                    self.updateplayer1()
+                    self.updatePlayer1Score()
                     self.growSnake(player: 1)
                     deadSnakeFood[x].removeFromParent()
                     deadSnakeFood.remove(at: x)
@@ -550,7 +727,7 @@ class TwoPlayers: SKScene, SKPhysicsContactDelegate
                     Int(snake2[0].position.y) <= Int(deadSnakeFood[x].position.y) + 15)
                 {
                     //  print("Dead Snake Food Eaten")
-                    self.updateplayer2()
+                    self.updatePlayer2Score()
                     self.growSnake(player: 2)
                     deadSnakeFood[x].removeFromParent()
                     deadSnakeFood.remove(at: x)
@@ -560,30 +737,32 @@ class TwoPlayers: SKScene, SKPhysicsContactDelegate
         }
     }
     
-    func updateplayer1(){
+    func updatePlayer1Score(){
         player1 += 1
         player1Label.text = "\(player1)"
     }
     
-    func updateplayer2(){
+    func updatePlayer2Score(){
         player2 += 1
         player2Label.text = "\(player2)"
     }
     
     func growSnake(player : Int)
     {
-        if(player == 1){
-        var circle2 = SKShapeNode()
-        circle2 = self.snake(player: 1)
-        circle2.position.x = snake1[snake1.count-1].position.x + 15.0
-        circle2.position.y = snake1[snake1.count-1].position.y
-        
-        snake1.append(circle2)
-        self.addChild(snake1[snake1.count-1])
-        }
-        else{
+        if(player == 1)
+        {
             var circle2 = SKShapeNode()
-            circle2 = self.snake(player: 2)
+            circle2 = self.snake(player: 1, type: "new")
+            circle2.position.x = snake1[snake1.count-1].position.x + 15.0
+            circle2.position.y = snake1[snake1.count-1].position.y
+            
+            snake1.append(circle2)
+            self.addChild(snake1[snake1.count-1])
+        }
+        else
+        {
+            var circle2 = SKShapeNode()
+            circle2 = self.snake(player: 2, type: "new")
             circle2.position.x = snake2[snake2.count-1].position.x + 15.0
             circle2.position.y = snake2[snake2.count-1].position.y
             
@@ -595,51 +774,54 @@ class TwoPlayers: SKScene, SKPhysicsContactDelegate
     func killSnake(snakeNumber: Int)
     {
         //if player1 killed
-        if(snakeNumber == 1){
-            if(player1DeathCount == 0){
+        if(snakeNumber == 1)
+        {
+            if(player1DeathCount == 0)
+            {
                 self.gameOver(player: 1)
             }
-            else{
+            else
+            {
                 player1DeathCount -= 1
-                print(player1DeathCount)
-                if(snakeNumber == 1)
+                //print(player1DeathCount)
+                for i in 0...snake1.count - 1
                 {
-                    for i in 0...snake1.count - 1
-                    {
-                        player1PositionArray[i] = snake1[i].position
-                        snake1[i].removeAllActions()
-                        //When player1Lost gives broken effect
-                        snake1[i].position.x = snake1[i].position.x + randomValue(min: -10.0, max: 10.0)
-                        snake1[i].position.y = snake1[i].position.y + randomValue(min: -10.0, max: 10.0)
-                    }
+                    player1PositionArray[i] = snake1[i].position
+                    snake1[i].removeAllActions()
+                    
+                    //When player1 Lost gives broken effect
+                    //snake1[i].position.x = snake1[i].position.x + randomValue(min: -10.0, max: 10.0)
+                    //snake1[i].position.y = snake1[i].position.y + randomValue(min: -10.0, max: 10.0)
                 }
+                
                 self.player1ControllerMoved = false
                 self.createFoodOnSnakeKill(snakeNumber: snakeNumber)
             }
         }
         //if player 2 killed
         else{
-            if(player2DeathCount == 0){
-                self.gameOver(player: 2)
-            }
-            else{
-                player2DeathCount -= 1
-                print(player2DeathCount)
-                if(snakeNumber == 2)
+                if(player2DeathCount == 0)
                 {
+                    self.gameOver(player: 2)
+                }
+                else
+                {
+                    player2DeathCount -= 1
+                    //print(player2DeathCount)
                     for i in 0...snake2.count - 1
                     {
                         player2PositionArray[i] = snake2[i].position
                         snake2[i].removeAllActions()
-                        //When player1Lost gives broken effect
-                        snake2[i].position.x = snake2[i].position.x + randomValue(min: -10.0, max: 10.0)
-                        snake2[i].position.y = snake2[i].position.y + randomValue(min: -10.0, max: 10.0)
+                            
+                        //When player2 Lost gives broken effect
+                        //snake2[i].position.x = snake2[i].position.x + randomValue(min: -10.0, max: 10.0)
+                        //snake2[i].position.y = snake2[i].position.y + randomValue(min: -10.0, max: 10.0)
                     }
+                    
+                    self.player2ControllerMoved = false
+                    self.createFoodOnSnakeKill(snakeNumber: snakeNumber)
                 }
-                self.player2ControllerMoved = false
-                self.createFoodOnSnakeKill(snakeNumber: 2)
             }
-        }
     }
     
     func createFoodOnSnakeKill(snakeNumber: Int)
@@ -649,8 +831,9 @@ class TwoPlayers: SKScene, SKPhysicsContactDelegate
             for x in 0...(snake1.count - 1)
             {
                 var snakeFood1 = SKShapeNode()
-                snakeFood1 = SKShapeNode(circleOfRadius: 10)
-                snakeFood1.fillColor = snake1[0].fillColor
+                
+                snakeFood1 = self.snake(player: snakeNumber, type: "dead")
+                
                 snakeFood1.position.x = snake1[x].position.x + randomValue(min: -15.0, max: 15.0)
                 snakeFood1.position.y = snake1[x].position.y + randomValue(min: -15.0, max: 15.0)
                 snakeFood1.run(SKAction.sequence([SKAction.wait(forDuration: 5.0),SKAction.fadeOut(withDuration: 10), SKAction.hide()]))
@@ -658,14 +841,15 @@ class TwoPlayers: SKScene, SKPhysicsContactDelegate
                 snake1[x].removeFromParent()
             }
             snake1.removeAll()
-            self.createSnake(player: 1)
         }
-        else{
+        else
+        {
             for x in 0...(snake2.count - 1)
             {
                 var snakeFood2 = SKShapeNode()
-                snakeFood2 = SKShapeNode(circleOfRadius: 10)
-                snakeFood2.fillColor = snake2[0].fillColor
+                
+                snakeFood2 = self.snake(player: snakeNumber, type: "dead")
+                
                 snakeFood2.position.x = snake2[x].position.x + randomValue(min: -15.0, max: 15.0)
                 snakeFood2.position.y = snake2[x].position.y + randomValue(min: -15.0, max: 15.0)
                 snakeFood2.run(SKAction.sequence([SKAction.wait(forDuration: 5.0),SKAction.fadeOut(withDuration: 10), SKAction.hide()]))
@@ -673,7 +857,6 @@ class TwoPlayers: SKScene, SKPhysicsContactDelegate
                 snake2[x].removeFromParent()
             }
             snake2.removeAll()
-            self.createSnake(player: 2)
         }
         
         if(!deadSnakeFood.isEmpty)
@@ -681,11 +864,12 @@ class TwoPlayers: SKScene, SKPhysicsContactDelegate
             //   NSLog("Adding snakefood")
             for y in 0...deadSnakeFood.count-1
             {
-                if(!deadSnakeFood[y].inParentHierarchy(self)){
+                if(!deadSnakeFood[y].inParentHierarchy(self) && !deadSnakeFood[y].isHidden){
                     self.addChild(deadSnakeFood[y])
                 }
             }
         }
+        self.createSnake(player: snakeNumber)
     }
     
     func gameOver(player : Int)
@@ -729,7 +913,7 @@ class TwoPlayers: SKScene, SKPhysicsContactDelegate
         player1 = 0
         
         player2Lost = false
-        player2 = 2
+        player2 = 0
         
         startGame()
     }
