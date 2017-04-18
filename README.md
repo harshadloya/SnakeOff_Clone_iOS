@@ -21,8 +21,4 @@ You get 5 lives to score the maximum score.
 ## Repo owner or admin ##
 Nimesh Pradhan
 
-npradha2@binghamton.edu
-
 Harshad Loya.
-
-hloya1@binghamton.edu
