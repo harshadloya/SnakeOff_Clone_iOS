@@ -13,8 +13,11 @@ Click on build.
 Game should then run in the simulator.
 
 ## Game Rules ##
+
 Collecting Food increases your score and grows the snake.
+
 Once you touch the edge of screen, you loose.
+
 You get 5 lives to score the maximum score.
 
 
