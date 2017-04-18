@@ -11,6 +11,7 @@ import GameplayKit
 
 class GameMenuScene: SKScene
 {
+    var gameName = SKLabelNode()
     var button1 = SKLabelNode()
     var button2 = SKLabelNode()
     
@@ -23,13 +24,24 @@ class GameMenuScene: SKScene
         background.zPosition = 1
         self.addChild(background)
         
+        //adding snake image
+        let snake = SKSpriteNode(imageNamed: "snake")
+        snake.position = CGPoint(x: self.frame.width / 2 + self.frame.width / 3, y: self.frame.height / 2)
+        snake.zPosition = 2
+        self.addChild(snake)
         
+        gameName = self.createButton()
+        gameName.position.y += 100
+        gameName.text = "Snake Off"
+        gameName.fontSize = 52
+        self.addChild(gameName)
+        
+        //One Player Button
         button1 = self.createButton()
         button1.text = "One Player"
         self.addChild(button1)
         
-        
-       //  Add new buttons in similar way for giving options
+        //Two Player Button
         button2 = self.createButton()
         button2.position.y -= 50
         button2.text = "Two Players"
